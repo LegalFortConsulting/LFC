@@ -1,7 +1,0 @@
-body { font-family: Arial, sans-serif; background:#f6f8fb; margin:0; padding:0; color:#0f1724; }
-header, footer { background:#1f6fe0; color:white; text-align:center; padding:15px 0; }
-main { max-width:600px; margin:30px auto; padding:0 15px; }
-input, textarea { width:100%; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:6px; }
-button { padding:10px 15px; background:#1f6fe0; color:white; border:none; border-radius:6px; cursor:pointer; }
-button:hover { background:#155db2; }
-#form-status { margin-top:10px; font-weight:700; }
