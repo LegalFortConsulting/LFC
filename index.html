@@ -33,7 +33,7 @@
       backdrop-filter: blur(6px);
       position: sticky;
       top: 0;
-      z-index: 40;
+      z-index: 100;
       border-bottom: 1px solid var(--border);
     }
 
@@ -42,14 +42,29 @@
     /* =========================
        Навигация
     ========================== */
-    .nav { display: flex; gap: 18px; align-items: center; justify-content: space-between; }
+    .nav { display: flex; gap: 18px; align-items: center; justify-content: space-between; position: relative; }
     .brand { display: flex; align-items: center; gap: 12px; }
 
-    /* Логотип — увеличен */
+    /* Логотип */
     .logo { width: 120px; height: 120px; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center; background:#fff; }
 
-    nav a { color: var(--muted); text-decoration: none; font-weight: 600; }
-    nav a:hover { color: var(--accent); }
+    nav.menu a { color: var(--muted); text-decoration: none; font-weight: 600; margin-right: 12px; }
+    nav.menu a:hover { color: var(--accent); }
+
+    /* Бургер-кнопка */
+    .burger { display: none; background: none; border: none; cursor: pointer; padding: 8px; position: relative; z-index: 101; }
+    .burger span {
+      display: block;
+      width: 26px;
+      height: 3px;
+      background: var(--accent);
+      margin: 5px 0;
+      border-radius: 2px;
+      transition: 0.4s;
+    }
+    .burger.active span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+    .burger.active span:nth-child(2) { opacity: 0; }
+    .burger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
 
     /* =========================
        Секции
@@ -57,9 +72,7 @@
     section { padding: 36px 0; border-top: 1px solid rgba(0,0,0,0.03); }
     h1,h2,h3 { letter-spacing: -0.2px; }
 
-    /* =========================
-       Hero / Главный блок
-    ========================== */
+    /* Hero / Главный блок */
     .hero { display: grid; grid-template-columns: 1fr 380px; gap: 32px; align-items: center; }
     .badge { display:inline-block; background:#ede4da; color:var(--accent); padding:6px 12px; border-radius:999px; font-weight:700; margin-bottom:14px; }
     h1 { font-size:30px; margin:0 0 14px; }
@@ -71,9 +84,7 @@
 
     .card { background:var(--card); padding:20px; border-radius:14px; border:1px solid var(--border); box-shadow:0 8px 22px rgba(0,0,0,0.04); }
 
-    /* =========================
-       Сетки
-    ========================== */
+    /* Сетки */
     .services { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:22px; }
     .service strong { display:block; margin-bottom:6px; }
 
@@ -88,11 +99,51 @@
 
     footer { padding:30px 0; color:var(--muted); font-size:14px; }
 
-    @media(max-width:900px){.hero{grid-template-columns:1fr}.services{grid-template-columns:repeat(2,1fr)}.grid-3{grid-template-columns:1fr}}
+    /* =========================
+       Адаптивность / Бургер
+    ========================== */
+    @media(max-width:900px){
+      .hero{grid-template-columns:1fr; gap:24px;}
+      .services{grid-template-columns:repeat(2,1fr);}
+      .grid-3{grid-template-columns:1fr}
+      .burger{display:block;}
+      nav.menu{
+        display:none; 
+        position:absolute; 
+        top:100%; 
+        right:0; 
+        background:#fff; 
+        border:1px solid var(--border); 
+        border-radius:12px; 
+        box-shadow:0 10px 30px rgba(0,0,0,0.08); 
+        flex-direction:column; 
+        padding:12px; 
+        min-width:220px; 
+        z-index:100;
+      }
+      nav.menu.active{display:flex;}
+      nav.menu a{padding:10px 12px; border-radius:8px;}
+      nav.menu a:hover{background:#f4efe8;}
+      /* Полупрозрачный фон */
+      #menuOverlay {
+        display:none;
+        position:fixed;
+        top:0; left:0; width:100%; height:100%;
+        background: rgba(0,0,0,0.3);
+        z-index:99;
+      }
+      #menuOverlay.active { display:block; }
+    }
+
     @media(max-width:520px){.services{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
+
+<!-- =========================
+     Overlay для меню
+========================== -->
+<div id="menuOverlay"></div>
 
 <!-- =========================
      Хедер / Навигация
@@ -109,11 +160,20 @@
         <div style="font-size:13px;color:var(--muted)">Юридические услуги — Москва</div>
       </div>
     </div>
-    <nav>
+
+    <!-- Бургер-кнопка -->
+    <button class="burger" id="burgerBtn" aria-label="Открыть меню">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <!-- Меню -->
+    <nav class="menu" id="mobileMenu">
       <a href="#services">Услуги</a>
       <a href="#about">О компании</a>
       <a href="#prices">Стоимость</a>
-      <a href="#contacts">Контакты</a>
+      <a href="#contacts" class="menu-cta">Консультация</a>
     </nav>
   </div>
 </header>
@@ -123,11 +183,9 @@
 <!-- =========================
      Hero блок
 ========================== -->
-<section class="hero" style="display:flex; gap:32px; flex-wrap:wrap; align-items:flex-start;">
-  <!-- =========================
-       Левый блок: текст + "Наш подход"
-  ========================== -->
-  <div style="flex:1; min-width:300px;">
+<section class="hero">
+  <!-- Левый блок: текст + "Наш подход" -->
+  <div>
     <div>
       <div class="badge">Надёжная правовая защита</div>
       <h1>Юридическая помощь в Москве для бизнеса, частных лиц и военнослужащих</h1>
@@ -138,11 +196,8 @@
       </div>
     </div>
 
-    <!-- =========================
-         Карточка "Наш подход" с картинкой справа
-    ========================== -->
+    <!-- Карточка "Наш подход" -->
     <div class="card" style="display:flex; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-top:26px;">
-      <!-- Текст -->
       <div style="flex:1; min-width:200px;">
         <strong>Наш подход</strong>
         <ul style="margin:10px 0 0; padding-left:18px">
@@ -151,16 +206,13 @@
           <li>Юридическая ответственность за результат</li>
         </ul>
       </div>
-      <!-- Картинка справа -->
       <div style="flex:0 0 200px;">
         <img src="assets/podhod.jpg" alt="Наш подход" style="width:100%; border-radius:8px; display:block;">
       </div>
     </div>
   </div>
 
-  <!-- =========================
-       Правый блок: "Связаться с нами"
-  ========================== -->
+  <!-- Правый блок: "Связаться с нами" -->
   <aside class="card" style="flex:0 0 300px; min-width:250px;">
     <div style="font-size:14px;color:var(--muted)">Связаться с нами</div>
     <div class="phone" style="font-size:18px;margin:6px 0">+7 (910) 437‑54‑90</div>
@@ -171,7 +223,6 @@
     <button class="btn" style="margin-top:14px" onclick="document.getElementById('contacts').scrollIntoView({behavior:'smooth'})">Оставить заявку</button>
   </aside>
 </section>
-
 
 <!-- =========================
      Услуги
@@ -213,39 +264,33 @@
 <section id="trust">
   <h2>Наши сертификаты и дипломы</h2>
   <div class="grid-3" style="margin-top:14px">
-    <!-- Картинка диплома 1 -->
     <div class="card">
       <img src="assets/diplom1.jpg" alt="Диплом 1" style="width:100%;border-radius:8px">
-      <p class="lead-small">-</p>
+      <p class="lead-small">Диплом / сертификат</p>
     </div>
-    <!-- Картинка диплома 2 -->
     <div class="card">
       <img src="assets/diplom2.jpg" alt="Диплом 2" style="width:100%;border-radius:8px">
-      <p class="lead-small">-</p>
+      <p class="lead-small">Диплом / сертификат</p>
     </div>
-    <!-- Картинка диплома 3 -->
     <div class="card">
       <img src="assets/diplom3.jpg" alt="Диплом 3" style="width:100%;border-radius:8px">
-      <p class="lead-small">-</p>
+      <p class="lead-small">Диплом / сертификат</p>
     </div>
   </div>
 </section>
 
 <!-- =========================
      Контакты / Форма заявки
-     (Форма минимальная, для вашего JS)
 ========================== -->
 <section id="contacts">
   <h2>Контакты</h2>
   <div class="cols">
-    <!-- Контакты -->
     <div class="card">
       <p><strong>Город:</strong> Москва</p>
       <p><strong>Телефон:</strong> <span class="phone">+7 (910) 437‑54‑90</span></p>
       <p><strong>Email:</strong> evgeshon11@mail.ru</p>
     </div>
 
-    <!-- Форма заявки -->
     <div class="card">
       <form id="contactForm">
         <input type="text" name="name" placeholder="Ваше имя" required>
@@ -253,7 +298,6 @@
         <input type="text" name="city" placeholder="Город" required>
         <textarea name="message" rows="4" placeholder="Кратко опишите вопрос"></textarea>
         <button type="submit" class="btn">Отправить заявку</button>
-        <!-- Блок для статуса отправки -->
         <div id="form-status" style="margin-top:8px;color:green;"></div>
       </form>
     </div>
@@ -273,9 +317,10 @@
 </footer>
 
 <!-- =========================
-     JS скрипт для отправки формы
+     JS: форма + бургер + overlay
 ========================== -->
 <script>
+/* Форма */
 document.getElementById("contactForm").addEventListener("submit", function(e) {
     e.preventDefault();
     const status = document.getElementById("form-status");
@@ -292,6 +337,40 @@ document.getElementById("contactForm").addEventListener("submit", function(e) {
     .catch(() => {
         status.innerText = "Ошибка отправки, попробуйте позже.";
     });
+});
+
+/* Бургер + overlay */
+const burger = document.getElementById('burgerBtn');
+const menu = document.getElementById('mobileMenu');
+const overlay = document.getElementById('menuOverlay');
+
+function toggleMenu() {
+  burger.classList.toggle('active');
+  menu.classList.toggle('active');
+  overlay.classList.toggle('active');
+}
+
+burger.addEventListener('click', (e) => {
+  e.stopPropagation();
+  toggleMenu();
+});
+
+menu.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    burger.classList.remove('active');
+    menu.classList.remove('active');
+    overlay.classList.remove('active');
+  });
+});
+
+/* Закрытие меню по клику вне + overlay */
+overlay.addEventListener('click', toggleMenu);
+document.addEventListener('click', (e) => {
+  if (!menu.contains(e.target) && !burger.contains(e.target)) {
+    burger.classList.remove('active');
+    menu.classList.remove('active');
+    overlay.classList.remove('active');
+  }
 });
 </script>
 
