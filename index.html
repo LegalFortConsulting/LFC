@@ -2,23 +2,158 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>LegalFortConsulting — юридические услуги в Москве</title>
   <meta name="description" content="LegalFortConsulting — профессиональная юридическая помощь в Москве: консультации, суды, договоры, сопровождение бизнеса, военнослужащих и вопросы военного права. Конфиденциально и результативно.">
-  
-  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* =========================
+       Цвета и базовые стили
+    ========================== */
+    :root {
+      --bg: #f4efe8;
+      --card: #ffffff;
+      --accent: #3a2f2a;
+      --muted: #6b625c;
+      --text: #1f1b18;
+      --border: #e3dbd2;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      font-family: Inter, system-ui, 'Segoe UI', Roboto, Arial;
+      line-height: 1.6;
+      margin: 0;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    header {
+      background: rgba(244,239,232,0.9);
+      backdrop-filter: blur(6px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .container { max-width: 1120px; margin: 0 auto; padding: 22px; }
+
+    /* =========================
+       Навигация
+    ========================== */
+    .nav { display: flex; gap: 18px; align-items: center; justify-content: space-between; position: relative; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+
+    /* Логотип */
+    .logo { width: 120px; height: 120px; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center; background:#fff; }
+
+    nav.menu a { color: var(--muted); text-decoration: none; font-weight: 600; margin-right: 12px; }
+    nav.menu a:hover { color: var(--accent); }
+
+    /* Бургер-кнопка */
+    .burger { display: none; background: none; border: none; cursor: pointer; padding: 8px; position: relative; z-index: 101; }
+    .burger span {
+      display: block;
+      width: 26px;
+      height: 3px;
+      background: var(--accent);
+      margin: 5px 0;
+      border-radius: 2px;
+      transition: 0.4s;
+    }
+    .burger.active span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+    .burger.active span:nth-child(2) { opacity: 0; }
+    .burger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+
+    /* =========================
+       Секции
+    ========================== */
+    section { padding: 36px 0; border-top: 1px solid rgba(0,0,0,0.03); }
+    h1,h2,h3 { letter-spacing: -0.2px; }
+
+    /* Hero / Главный блок */
+    .hero { display: grid; grid-template-columns: 1fr 380px; gap: 32px; align-items: center; }
+    .badge { display:inline-block; background:#ede4da; color:var(--accent); padding:6px 12px; border-radius:999px; font-weight:700; margin-bottom:14px; }
+    h1 { font-size:30px; margin:0 0 14px; }
+    .lead { color:var(--muted); margin:0 0 22px; }
+
+    .cta { display:flex; gap:14px; flex-wrap:wrap; }
+    .btn { background:var(--accent); color:#fff; padding:13px 18px; border-radius:10px; border:0; cursor:pointer; font-weight:700; }
+    .btn.ghost { background:transparent; color:var(--accent); border:2px solid var(--accent); }
+
+    .card { background:var(--card); padding:20px; border-radius:14px; border:1px solid var(--border); box-shadow:0 8px 22px rgba(0,0,0,0.04); }
+
+    /* Сетки */
+    .services { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:22px; }
+    .service strong { display:block; margin-bottom:6px; }
+
+    .cols { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+
+    .phone { font-weight:800; color:var(--accent); }
+    .lead-small { color:var(--muted); font-size:15px; }
+
+    form input, form textarea { width:100%; padding:11px; border:1px solid var(--border); border-radius:8px; margin-bottom:12px; font-family:inherit; }
+    form button { width:100%; }
+
+    footer { padding:30px 0; color:var(--muted); font-size:14px; }
+
+    /* =========================
+       Адаптивность / Бургер
+    ========================== */
+    @media(max-width:900px){
+      .hero{grid-template-columns:1fr; gap:24px;}
+      .services{grid-template-columns:repeat(2,1fr);}
+      .grid-3{grid-template-columns:1fr}
+      .burger{display:block;}
+      nav.menu{
+        display:none; 
+        position:absolute; 
+        top:100%; 
+        right:0; 
+        background:#fff; 
+        border:1px solid var(--border); 
+        border-radius:12px; 
+        box-shadow:0 10px 30px rgba(0,0,0,0.08); 
+        flex-direction:column; 
+        padding:12px; 
+        min-width:220px; 
+        z-index:100;
+      }
+      nav.menu.active{display:flex;}
+      nav.menu a{padding:10px 12px; border-radius:8px;}
+      nav.menu a:hover{background:#f4efe8;}
+      /* Полупрозрачный фон */
+      #menuOverlay {
+        display:none;
+        position:fixed;
+        top:0; left:0; width:100%; height:100%;
+        background: rgba(0,0,0,0.3);
+        z-index:99;
+      }
+      #menuOverlay.active { display:block; }
+    }
+
+    @media(max-width:520px){.services{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
 
-<!-- Overlay для меню -->
-<div class="menu-overlay" id="menuOverlay"></div>
+<!-- =========================
+     Overlay для меню
+========================== -->
+<div id="menuOverlay"></div>
 
-<!-- Хедер -->
+<!-- =========================
+     Хедер / Навигация
+========================== -->
 <header>
   <div class="container nav">
     <div class="brand">
+      <!-- Логотип компании -->
       <div class="logo">
-        <img src="assets/logo.jpg" alt="LegalFortConsulting">
+        <img src="assets/logo.jpg" alt="LegalFortConsulting" style="width:100%;height:100%;object-fit:cover;border-radius:12px">
       </div>
       <div>
         <div style="font-weight:800">LegalFortConsulting</div>
@@ -26,12 +161,14 @@
       </div>
     </div>
 
+    <!-- Бургер-кнопка -->
     <button class="burger" id="burgerBtn" aria-label="Открыть меню">
       <span></span>
       <span></span>
       <span></span>
     </button>
 
+    <!-- Меню -->
     <nav class="menu" id="mobileMenu">
       <a href="#services">Услуги</a>
       <a href="#about">О компании</a>
@@ -43,72 +180,108 @@
 
 <main class="container">
 
-<!-- Hero -->
+<!-- =========================
+     Hero блок
+========================== -->
 <section class="hero">
-  <div class="hero-text">
-    <div class="badge">Надёжная правовая защита</div>
-    <h1>Юридическая помощь в Москве для бизнеса, частных лиц и военнослужащих</h1>
-    <p class="lead">LegalFortConsulting — команда практикующих юристов. Консультации по гражданскому, военному праву, контрактной службе, вопросам СВО. Работаем только за результат, конфиденциально и в интересах клиента.</p>
-    <div class="cta">
-      <button class="btn" onclick="document.getElementById('contacts').scrollIntoView({behavior:'smooth'})">Получить консультацию</button>
-      <a class="btn ghost" href="#services">Смотреть услуги</a>
+  <!-- Левый блок: текст + "Наш подход" -->
+  <div>
+    <div>
+      <div class="badge">Надёжная правовая защита</div>
+      <h1>Юридическая помощь в Москве для бизнеса, частных лиц и военнослужащих</h1>
+      <p class="lead">LegalFortConsulting — команда практикующих юристов. Консультации по гражданскому, военному праву, контрактной службе, вопросам СВО. Работаем только за результат, конфиденциально и в интересах клиента.</p>
+      <div class="cta">
+        <button class="btn" onclick="document.getElementById('contacts').scrollIntoView({behavior:'smooth'})">Получить консультацию</button>
+        <a class="btn ghost" href="#services">Смотреть услуги</a>
+      </div>
     </div>
 
-    <div class="approach-card">
-      <div class="approach-text">
+    <!-- Карточка "Наш подход" -->
+    <div class="card" style="display:flex; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-top:26px;">
+      <div style="flex:1; min-width:200px;">
         <strong>Наш подход</strong>
-        <ul>
+        <ul style="margin:10px 0 0; padding-left:18px">
           <li>Глубокий анализ ситуации до начала работы</li>
           <li>Прозрачная стратегия и понятные шаги</li>
           <li>Юридическая ответственность за результат</li>
         </ul>
       </div>
-      <div class="approach-img">
-        <img src="assets/podhod.jpg" alt="Наш подход">
+      <div style="flex:0 0 200px;">
+        <img src="assets/podhod.jpg" alt="Наш подход" style="width:100%; border-radius:8px; display:block;">
       </div>
     </div>
   </div>
 
-  <aside class="card contact-card">
+  <!-- Правый блок: "Связаться с нами" -->
+  <aside class="card" style="flex:0 0 300px; min-width:250px;">
     <div style="font-size:14px;color:var(--muted)">Связаться с нами</div>
-    <div class="phone">+7 (910) 437‑54‑90</div>
+    <div class="phone" style="font-size:18px;margin:6px 0">+7 (910) 437‑54‑90</div>
     <div class="lead-small">Telegram / WhatsApp</div>
-    <hr>
+    <hr style="margin:14px 0;border:none;border-top:1px solid var(--border)">
     <div class="lead-small">Режим работы</div>
     <div style="font-weight:700">Пн–Вс: 10:00–20:00</div>
-    <button class="btn" onclick="document.getElementById('contacts').scrollIntoView({behavior:'smooth'})">Оставить заявку</button>
+    <button class="btn" style="margin-top:14px" onclick="document.getElementById('contacts').scrollIntoView({behavior:'smooth'})">Оставить заявку</button>
   </aside>
 </section>
 
-<!-- Услуги -->
+<!-- =========================
+     Услуги
+========================== -->
 <section id="services">
   <h2>Юридические услуги</h2>
   <p class="lead-small">Комплексное сопровождение — от консультации до полного разрешения ситуации, включая военно-правовые вопросы.</p>
   <div class="services">
-    <div class="card service"><strong>Юридические консультации</strong><p class="lead-small">Очные и дистанционные консультации, правовой анализ, включая военнослужащих и контракт СВО.</p></div>
-    <div class="card service"><strong>Судебная защита</strong><p class="lead-small">Представительство в судах всех инстанций, включая споры по контрактной службе.</p></div>
-    <div class="card service"><strong>Договорное право</strong><p class="lead-small">Разработка, проверка, сопровождение сделок.</p></div>
-    <div class="card service"><strong>Семейные споры</strong><p class="lead-small">Разводы, алименты, раздел имущества.</p></div>
-    <div class="card service"><strong>Наследственные дела</strong><p class="lead-small">Вступление в наследство, споры, защита долей.</p></div>
-    <div class="card service"><strong>Бизнес‑сопровождение</strong><p class="lead-small">Абонентское юридическое обслуживание компаний.</p></div>
+    <div class="card service">
+      <strong>Юридические консультации</strong>
+      <p class="lead-small">Очные и дистанционные консультации, правовой анализ, включая военнослужащих и контракт СВО.</p>
+    </div>
+    <div class="card service">
+      <strong>Судебная защита</strong>
+      <p class="lead-small">Представительство в судах всех инстанций, включая споры по контрактной службе.</p>
+    </div>
+    <div class="card service">
+      <strong>Договорное право</strong>
+      <p class="lead-small">Разработка, проверка, сопровождение сделок.</p>
+    </div>
+    <div class="card service">
+      <strong>Семейные споры</strong>
+      <p class="lead-small">Разводы, алименты, раздел имущества.</p>
+    </div>
+    <div class="card service">
+      <strong>Наследственные дела</strong>
+      <p class="lead-small">Вступление в наследство, споры, защита долей.</p>
+    </div>
+    <div class="card service">
+      <strong>Бизнес‑сопровождение</strong>
+      <p class="lead-small">Абонентское юридическое обслуживание компаний.</p>
+    </div>
   </div>
 </section>
 
-<!-- Карусель дипломов -->
+<!-- =========================
+     Сертификаты / дипломы
+========================== -->
 <section id="trust">
   <h2>Наши сертификаты и дипломы</h2>
-  <div class="carousel">
-    <button class="carousel-btn prev">❮</button>
-    <div class="carousel-track">
-      <div class="carousel-item"><img src="assets/diplom1.jpg" alt="Диплом 1"></div>
-      <div class="carousel-item"><img src="assets/diplom2.jpg" alt="Диплом 2"></div>
-      <div class="carousel-item"><img src="assets/diplom3.jpg" alt="Диплом 3"></div>
+  <div class="grid-3" style="margin-top:14px">
+    <div class="card">
+      <img src="assets/diplom1.jpg" alt="Диплом 1" style="width:100%;border-radius:8px">
+      <p class="lead-small">Диплом / сертификат</p>
     </div>
-    <button class="carousel-btn next">❯</button>
+    <div class="card">
+      <img src="assets/diplom2.jpg" alt="Диплом 2" style="width:100%;border-radius:8px">
+      <p class="lead-small">Диплом / сертификат</p>
+    </div>
+    <div class="card">
+      <img src="assets/diplom3.jpg" alt="Диплом 3" style="width:100%;border-radius:8px">
+      <p class="lead-small">Диплом / сертификат</p>
+    </div>
   </div>
 </section>
 
-<!-- Контакты -->
+<!-- =========================
+     Контакты / Форма заявки
+========================== -->
 <section id="contacts">
   <h2>Контакты</h2>
   <div class="cols">
@@ -125,7 +298,7 @@
         <input type="text" name="city" placeholder="Город" required>
         <textarea name="message" rows="4" placeholder="Кратко опишите вопрос"></textarea>
         <button type="submit" class="btn">Отправить заявку</button>
-        <div id="form-status"></div>
+        <div id="form-status" style="margin-top:8px;color:green;"></div>
       </form>
     </div>
   </div>
@@ -133,6 +306,9 @@
 
 </main>
 
+<!-- =========================
+     Футер
+========================== -->
 <footer>
   <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px">
     <div>© LegalFortConsulting, Москва</div>
@@ -140,6 +316,68 @@
   </div>
 </footer>
 
-<script src="script.js"></script>
+<!-- =========================
+     JS: форма + бургер + overlay
+========================== -->
+<script>
+
+
+// ===== Бургер меню =====
+const burger = document.querySelector('.burger');         
+const menu = document.querySelector('nav.menu');           
+const overlay = document.createElement('div');            
+overlay.className = 'menu-overlay';
+document.body.appendChild(overlay);
+
+// Открытие / закрытие меню
+burger.addEventListener('click', () => {
+    burger.classList.toggle('active');   // анимация кнопки
+    menu.classList.toggle('active');     // открыть/закрыть меню
+    overlay.classList.toggle('active');  // показать/скрыть overlay
+});
+
+// Закрытие по клику на overlay
+overlay.addEventListener('click', () => {
+    burger.classList.remove('active');
+    menu.classList.remove('active');
+    overlay.classList.remove('active');
+});
+
+// ===== Плавная прокрутка + закрытие меню при клике на ссылку =====
+document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+        }
+        // Закрыть меню, если оно открыто
+        if (burger.classList.contains('active')) {
+            burger.classList.remove('active');
+            menu.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+    });
+});
+
+// ===== JS для формы (оставляем твой существующий) =====
+document.getElementById("contactForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const status = document.getElementById("form-status");
+    const formData = new FormData(this);
+
+    fetch("https://script.google.com/macros/s/AKfycbz0YibnEhifXUu0_FeTF_6va0ve2RtwO2QAMsE5rrPQ7JkbAH3CYg675Ht8wEikZj--Eg/exec", {
+        method: "POST",
+        body: formData
+    })
+    .then(() => {
+        status.innerText = "Заявка успешно отправлена!";
+        this.reset();
+    })
+    .catch(() => {
+        status.innerText = "Ошибка отправки, попробуйте позже.";
+    });
+});
+</script>
 </body>
 </html>
