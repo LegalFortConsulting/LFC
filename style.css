@@ -79,6 +79,69 @@ h1 { font-size:30px; margin:0 0 14px; }
 .services { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:22px; }
 .service strong { display:block; margin-bottom:6px; }
 
+/* ===== Картинки в услугах ===== */
+.services .card img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+/* ===== Карусель дипломов ===== */
+.carousel {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 18px;
+  transition: transform 0.4s ease-in-out;
+}
+
+.carousel .card {
+  flex: 0 0 260px; /* ширина каждой карточки */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.carousel img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* Кнопки */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  z-index: 10;
+}
+
+.carousel-btn.prev { left: 0; }
+.carousel-btn.next { right: 0; }
+
+/* Адаптив */
+@media (max-width:900px){
+  .services { grid-template-columns:repeat(2,1fr); }
+  .carousel .card { flex: 0 0 220px; }
+}
+
+@media (max-width:520px){
+  .services, .carousel .card { grid-template-columns:1fr; flex: 0 0 90%; }
+}
+
+
 /* ===== Контакты ===== */
 .cols { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
 form input, form textarea { width:100%; padding:11px; border:1px solid var(--border); border-radius:8px; margin-bottom:12px; font-family:inherit; }
