@@ -231,12 +231,13 @@
 
     <!-- Форма заявки (оставлена минимально) -->
     <div class="card">
-      <form id="leadForm">
-        <input type="text" name="name" placeholder="Ваше имя" required>
-        <input type="tel" name="phone" placeholder="Пример: +7 (999) 123‑45‑67" required>
-        <input type="text" name="city" placeholder="Город" required>
-        <textarea name="message" rows="4" placeholder="Кратко опишите вопрос"></textarea>
-        <button type="submit" class="btn">Отправить заявку</button>
+      <form id="contactForm">
+  <input type="text" name="name" placeholder="Ваше имя" required>
+  <input type="tel" name="phone" placeholder="Пример: +7 (999) 123‑45‑67" required>
+  <input type="text" name="city" placeholder="Город" required>
+  <textarea name="message" rows="4" placeholder="Кратко опишите вопрос"></textarea>
+  <button type="submit" class="btn">Отправить заявку</button>
+  <div id="form-status" style="margin-top:8px;color:green;"></div>
       </form>
     </div>
   </div>
