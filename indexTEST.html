@@ -1092,6 +1092,10 @@ if (burger && menu && overlay) {
 /* -------------------------------------------------
    3️⃣ Форма + модальное окно согласия
    ------------------------------------------------- */
+<script>
+/* -------------------------------------------------
+   3️⃣ Форма + модальное окно согласия
+   ------------------------------------------------- */
 const consentModal  = document.getElementById('consentModal');
 const consentChk    = document.getElementById('consentCheckbox');
 const consentAccept = document.getElementById('consentAccept');
@@ -1103,9 +1107,12 @@ const phoneErrorEl  = document.querySelector('.phone-error');
 const API_URL = 'https://script.google.com/macros/s/AKfycbxYDM-EPa7pT3Vf2uCQDvKgfL2BSQBOu4b3OW8oNJxm_CESK-LemazzIXq0EfqHyL5rFw/exec';
 let payload = null;
 
+/* -------------------------------------------------
+   Открытие / закрытие модального окна
+   ------------------------------------------------- */
 function openModal(p) {
-  payload = p;
-  consentChk.checked = false;
+  payload = p;                         // сохраняем параметры формы
+  consentChk.checked = false;           // сбрасываем чекбокс
   consentModal.classList.add('active');
   document.body.style.overflow = 'hidden';
 }
@@ -1116,17 +1123,20 @@ function closeModal(){
 consentCancel.addEventListener('click', closeModal);
 consentModal.addEventListener('click', e => { if (e.target === consentModal) closeModal(); });
 
+/* -------------------------------------------------
+   Валидация и отправка формы
+   ------------------------------------------------- */
 form.addEventListener('submit', e => {
   e.preventDefault();
 
   const name   = form.name?.value.trim();
-  const phone  = form.phone?.value.trim();
+  const phone  = form.phone?.value.trim();   // оставляем оригинальное значение
   const city   = form.source?.value.trim();
   const msg    = form.message?.value.trim() || '';
 
-  // Очистим прежние сообщения об ошибках
+  // Очистим старые сообщения
   phoneErrorEl.textContent = '';
-  formStatus.textContent = '';
+  formStatus.textContent   = '';
 
   if (!name || !phone || !city) {
     formStatus.textContent = 'Пожалуйста, заполните все обязательные поля.';
@@ -1134,17 +1144,28 @@ form.addEventListener('submit', e => {
     return;
   }
 
-  // ------- валидация телефона ----------
-  const phonePattern = /^\+7\s?\(\d{3}\)\s?\d{3}[-\s]?\d{2}[-\s]?\d{2}$/;
+  /* -------------------------------------------------
+     «Мягкое» регулярное выражение для телефона
+     ------------------------------------------------- */
+  const phonePattern = /^(?:\+7|8)?\s*\(?\d{3}\)?\s*\d{3}[\s-]?\d{2}[\s-]?\d{2}$/;
   if (!phonePattern.test(phone)) {
-    phoneErrorEl.textContent = 'Введите телефон в формате +7 (999) 123‑45‑67';
+    phoneErrorEl.textContent = 'Введите телефон в формате +7 (999) 123‑45‑67 или 89991234567';
     return;
   }
 
-  const params = new URLSearchParams({name, phone, source:city, message:msg});
+  // Параметры, которые отправляем в Google‑таблицу – без изменения телефона!
+  const params = new URLSearchParams({
+    name,
+    phone,          // ← оригинальный пользовательский ввод
+    source: city,
+    message: msg
+  });
   openModal(params);
 });
 
+/* -------------------------------------------------
+   Обработчик согласия
+   ------------------------------------------------- */
 consentAccept.addEventListener('click', () => {
   if (!payload) { alert('Сначала заполните форму.'); return; }
   if (!consentChk.checked) { alert('Подтвердите согласие на обработку персональных данных.'); return; }
@@ -1174,6 +1195,7 @@ consentAccept.addEventListener('click', () => {
   })
   .finally(() => consentAccept.disabled = false);
 });
+</script>
 
 /* -------------------------------------------------
    4️⃣ Защита от битых изображений
