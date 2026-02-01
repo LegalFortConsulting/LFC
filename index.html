@@ -1145,8 +1145,7 @@ const contactForm = document.getElementById('contactForm');
 const formStatus = document.getElementById('form-status');
 
 const API_URL = 'https://script.google.com/macros/s/AKfycbxYDM-EPa7pT3Vf2uCQDvKgfL2BSQBOu4b3OW8oNJxm_CESK-LemazzIXq0EfqHyL5rFw/exec';
-
-let formPayload = null; // для модалки
+let formPayload = null;
 
 // ---------------- Модалка ----------------
 const closeConsentModal = () => {
@@ -1179,18 +1178,15 @@ contactForm.addEventListener('submit', function(e) {
     return;
   }
 
-  // Подготовка данных
-  const params = new URLSearchParams({
-    name, phone, source, message: message || ''
-  });
-
+  // Данные для отправки
+  const params = new URLSearchParams({ name, phone, source, message: message || '' });
   openConsentModal(params);
 });
 
 // ---------------- Подтверждение согласия ----------------
 consentAccept.addEventListener('click', function() {
   if(!consentCheckbox.checked){
-    alert('Пожалуйста, подтвердите согласие на обработку персональных данных');
+    alert('Подтвердите согласие на обработку персональных данных');
     return;
   }
 
@@ -1223,6 +1219,7 @@ consentAccept.addEventListener('click', function() {
   })
   .finally(() => consentAccept.disabled = false);
 });
+
 
   /* ======================
      Подтверждение согласия
