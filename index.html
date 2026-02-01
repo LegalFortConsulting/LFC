@@ -315,14 +315,9 @@
       word-break:break-word;
     }
     .footer-contact-value.phone { font-weight:700; color:var(--accent); font-size:16px; }
-    /* --------------  клик‑по‑телефону в подвале -------------- */
-    .footer-contact-item a.footer-contact-value.phone {
-      color:var(--accent);
-      text-decoration:none;          /* без подчеркивания */
-      cursor:pointer;                /* явно показывает кликабельность */
-    }
+    .footer-contact-value.phone:hover,
     .footer-contact-item a.footer-contact-value.phone:hover {
-      text-decoration:underline;    /* небольшое визуальное подтверждение */
+      text-decoration:underline;
     }
     .footer-contact-value a:hover { color:var(--accent); border-bottom-color:var(--accent); }
 
@@ -379,7 +374,7 @@
     }
 
     @media (max-width:520px){
-      .services { grid-template-columns:1px; }
+      .services { grid-template-columns:1fr; }
       .footer-bottom { flex-direction:column; align-items:center; }
 
       .lead { margin-bottom:16px; }
@@ -754,9 +749,9 @@
         <form id="contactForm">
           <input type="text" name="name" placeholder="Ваше имя" required>
           <input type="tel" name="phone"
-                 placeholder="Пример: +7 (999) 123‑45‑67 или 89991234567"
+                 placeholder="Пример: +7 (999) 123‑45‑67"
                  required>
-          <!-- Под полем телефона выводим ошибку -->
+          <!-- Ошибка под полем телефона -->
           <div class="error phone-error"></div>
 
           <input type="text" name="source" placeholder="Город" required>
@@ -784,7 +779,7 @@
         </div>
         <div class="footer-contact-item">
           <span class="footer-contact-label">Телефон:</span>
-          <!-- Кликабельный телефон -->
+          <!-- Кликабельный телефон в подвале -->
           <a href="tel:+79998365490"
              class="footer-contact-value phone">+7 (999) 836‑54‑90</a>
         </div>
@@ -877,7 +872,7 @@ if (burger && menu && overlay) {
 }
 
 /* -------------------------------------------------
-   2️⃣ Карусель (дипломы) – бесконечный, drag + autoplay
+   2️⃣ Карусель (дипломы) – бесконечный, drag + autoplay + wheel
    ------------------------------------------------- */
 (function() {
   const track   = document.getElementById('carouselTrack');
@@ -888,15 +883,16 @@ if (burger && menu && overlay) {
 
   if (!track || !prevBtn || !nextBtn || !dots || !container) return;
 
-  const originalHTML = track.innerHTML;
+  const originalHTML = track.innerHTML;          // сохраняем «чистый» набор
   let realItemsCount = 0;
   let realGroups = 0;
   let totalGroups = 0;
-  let idx = 1;
+  let idx = 1;                                   // первая реальная группа
   let dragging = false;
   let startX = 0, startPos = 0;
   let velocity = 0, lastX = 0, lastTime = 0;
   let curPos = 0;
+  let lastWheel = 0;                             // throttling для wheel
 
   const visibleCount = () => {
     if (window.innerWidth <= 520) return 1;
@@ -922,14 +918,14 @@ if (burger && menu && overlay) {
     const realItems = Array.from(track.children);
     realItemsCount = realItems.length;
     realGroups = Math.ceil(realItemsCount / visible);
-    totalGroups = realGroups + 2;
+    totalGroups = realGroups + 2; // клоны слева и справа
 
-    // left clones
+    // левый клон
     for (let i = realItemsCount - visible; i < realItemsCount; i++) {
       const clone = realItems[i].cloneNode(true);
       track.insertBefore(clone, track.firstChild);
     }
-    // right clones
+    // правый клон
     for (let i = 0; i < visible; i++) {
       const clone = realItems[i].cloneNode(true);
       track.appendChild(clone);
@@ -1006,8 +1002,8 @@ if (burger && menu && overlay) {
     const sw = slideWidth();
     const inertia = velocity * 200;
     const projected = curPos + inertia;
-    let newIdx = Math.round(projected / sw) + 1;
 
+    let newIdx = Math.round(projected / sw) + 1;
     if (newIdx <= 0) newIdx = totalGroups - 2;
     if (newIdx >= totalGroups - 1) newIdx = 1;
 
@@ -1032,26 +1028,46 @@ if (burger && menu && overlay) {
     }
   });
 
-  buildCarousel();
+  // ---------- drag ----------
+  track.addEventListener('pointerdown', startDrag);
+  track.addEventListener('pointermove', onDrag);
+  track.addEventListener('pointerup', endDrag);
+  track.addEventListener('pointercancel', endDrag);
+
+  // ---------- кнопки ----------
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+
+  // ---------- автопрокрутка ----------
+  let autoplay = setInterval(() => { if (!dragging) next(); }, 5000);
+  container.addEventListener('mouseenter', () => clearInterval(autoplay));
+  container.addEventListener('mouseleave', () => {
+    autoplay = setInterval(() => { if (!dragging) next(); }, 5000);
+  });
+
+  // ---------- wheel‑скролл ----------
+  container.addEventListener('wheel', e => {
+    e.preventDefault();               // отключаем обычный скролл страницы
+    if (dragging) return;            // игнорируем, пока идёт drag
+    const now = Date.now();
+    if (now - lastWheel < 250) return; // простой throttle (250 мс)
+    if (e.deltaY > 0) {
+      next();
+    } else if (e.deltaY < 0) {
+      prev();
+    }
+    lastWheel = now;
+  });
+
+  // ---------- ресайз ----------
   let resizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(buildCarousel, 250);
   });
 
-  track.addEventListener('pointerdown', startDrag);
-  track.addEventListener('pointermove', onDrag);
-  track.addEventListener('pointerup', endDrag);
-  track.addEventListener('pointercancel', endDrag);
-
-  prevBtn.addEventListener('click', prev);
-  nextBtn.addEventListener('click', next);
-
-  let autoplay = setInterval(() => { if (!dragging) next(); }, 5000);
-  container.addEventListener('mouseenter', () => clearInterval(autoplay));
-  container.addEventListener('mouseleave', () => {
-    autoplay = setInterval(() => { if (!dragging) next(); }, 5000);
-  });
+  // запуск
+  buildCarousel();
 })();
 
 /* -------------------------------------------------
@@ -1099,16 +1115,16 @@ form.addEventListener('submit', e => {
   }
 
   // «мягкое» регулярное выражение, принимает:
-  // +7 (999) 123‑45‑67   |   +7 999 123 45 67   |   8 (999)1234567   |   89991234567
+  // +7 (999) 123‑45‑67 | +7 999 123 45 67 | 8 (999)1234567 | 89991234567
   const phonePattern = /^(?:\+7|8)?\s*\(?\d{3}\)?\s*\d{3}[\s-]?\d{2}[\s-]?\d{2}$/;
   if (!phonePattern.test(phone)) {
     if (phoneErrorEl) {
-      phoneErrorEl.textContent = 'Введите телефон в формате +7 (999) 123‑45‑67';
+      phoneErrorEl.textContent = 'Введите телефон в формате +7 (999) 123‑45‑67 или 89991234567';
     }
     return;
   }
 
-  // отправляем именно то, что пользователь ввёл (без нормализации)
+  // отправляем оригинальное значение телефона без нормализации
   const params = new URLSearchParams({
     name,
     phone,
