@@ -129,7 +129,7 @@
       border-radius:14px;
       border:1px solid var(--border);
       box-shadow:0 8px 22px rgba(0,0,0,.04);
-      overflow-wrap:break-word;      /* перенос длинных слов */
+      overflow-wrap:break-word;
     }
 
     /* убираем фон и паддинги у карточках внутри карусели */
@@ -199,6 +199,7 @@
       touch-action:none;
     }
     .carousel-container:active { cursor:grabbing; }
+
     .carousel-track {
       display:flex;
       gap:18px;
@@ -206,6 +207,7 @@
       will-change:transform;
     }
     .carousel-track.dragging { transition:none; }
+
     .carousel-item {
       flex-shrink:0;
       min-width:0;                 /* ширина задаётся в JS */
@@ -219,6 +221,7 @@
       border-radius:8px;
       display:block;
     }
+
     .carousel-controls {
       display:flex;
       justify-content:center;
@@ -259,10 +262,9 @@
       .carousel-item img { max-height:400px; }
     }
     @media (max-width:520px) {
-      /* На мобильных показываем один диплом по центру, а карусель полностью скрываем */
-      .carousel-container { display:none; }
-      .mobile-diploma { display:block; text-align:center; margin-top:14px; }
-      .mobile-diploma img { max-width:100%; height:auto; border-radius:8px; }
+      .carousel-item { min-width:100%; }            /* один элемент — вся ширина */
+      .carousel-item img { max-height:300px; }
+      .carousel-track { gap:0; }                    /* убираем промежуток между элементами */
     }
 
     /* -------------------------------------------------
@@ -325,7 +327,7 @@
     @media (max-width:900px) {
       .hero { grid-template-columns:1fr; gap:24px; }
       .services { grid-template-columns:repeat(2,1fr); }
-      .cols { grid-template-columns:1fr; }       /* все двойные колонки переходят в одну */
+      .cols { grid-template-columns:1fr; }
       .burger { display:block; }
       nav.menu{
         display:none;
@@ -373,7 +375,7 @@
     }
 
     /* -------------------------------------------------
-       МОДАЛЬНОЕ ОКНО С СОГЛАСИЕМ
+       МОДАЛЬНОЕ ОКНО СОГЛАСИЯ
        ------------------------------------------------- */
     .modal-overlay{
       display:none;
@@ -460,7 +462,16 @@
     }
 
     /* -------------------------------------------------
-       ПРЕДПОЧТЕНИЯ ДЛЯ ПОЛЬЗОВАТЕЛЕЙ С ОТКЛЮЧЕННЫМ МАНЕВРОВЫМ ЭФФЕКТОМ
+       Ошибки в полях формы
+       ------------------------------------------------- */
+    form .error {
+      color:#c00;
+      font-size:13px;
+      margin-top:4px;
+    }
+
+    /* -------------------------------------------------
+       Предпочтения «без анимации»
        ------------------------------------------------- */
     @media (prefers-reduced-motion: reduce) {
       .service,
@@ -498,7 +509,8 @@
     </div>
 
     <!-- Бургер‑кнопка -->
-    <button class="burger" id="burgerBtn" aria-label="Открыть меню" aria-controls="mobileMenu" aria-expanded="false">
+    <button class="burger" id="burgerBtn" aria-label="Открыть меню"
+            aria-controls="mobileMenu" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
 
@@ -640,12 +652,10 @@
   </section>
 
   <!-- =========================
-       КАРУСЕЛЬ (сертификаты и дипломы)
+       КАРУСЕЛЬ (дипломы)
   ========================== -->
   <section id="trust">
     <h2>Наши сертификаты и дипломы</h2>
-
-    <!-- Десктоп / планшет (≥ 521px) -->
     <div class="carousel-container">
       <div class="carousel-track" id="carouselTrack">
         <div class="carousel-item"><div class="card"><img src="assets/diplom1.jpg" alt="Диплом 1"></div></div>
@@ -662,11 +672,6 @@
       <button class="carousel-nav prev" id="carouselPrev" aria-label="Предыдущий">‹</button>
       <button class="carousel-nav next" id="carouselNext" aria-label="Следующий">›</button>
       <div class="carousel-controls" id="carouselDots"></div>
-    </div>
-
-    <!-- Моб. версия (≤ 520px) – один центрированный диплом -->
-    <div class="mobile-diploma">
-      <img src="assets/diplom1.jpg" alt="Диплом">
     </div>
   </section>
 
@@ -719,7 +724,8 @@
           </div>
           <div style="display:flex;align-items:flex-start;gap:12px;">
             <strong style="color:var(--accent);min-width:90px;font-size:15px;">Email:</strong>
-            <a href="mailto:legalfortconsulting@mail.ru" style="color:var(--text);font-weight:500;font-size:15px;text-decoration:none;border-bottom:1px solid var(--border);transition:color .2s;">legalfortconsulting@mail.ru</a>
+            <a href="mailto:legalfortconsulting@mail.ru"
+               style="color:var(--text);font-weight:500;font-size:15px;text-decoration:none;border-bottom:1px solid var(--border);transition:color .2s;">legalfortconsulting@mail.ru</a>
           </div>
         </div>
       </div>
@@ -728,6 +734,7 @@
         <form id="contactForm">
           <input type="text" name="name" placeholder="Ваше имя" required>
           <input type="tel" name="phone" placeholder="Пример: +7 (999) 123‑45‑67" required>
+          <div class="error phone-error"></div>
           <input type="text" name="source" placeholder="Город" required>
           <textarea name="message" rows="4" placeholder="Кратко опишите вопрос"></textarea>
           <button type="submit" class="btn">Отправить заявку</button>
@@ -757,7 +764,9 @@
         </div>
         <div class="footer-contact-item">
           <span class="footer-contact-label">Email:</span>
-          <a href="mailto:legalfortconsulting@mail.ru" class="footer-contact-value" style="text-decoration:none;border-bottom:1px solid var(--border);transition:color .2s;">legalfortconsulting@mail.ru</a>
+          <a href="mailto:legalfortconsulting@mail.ru"
+             class="footer-contact-value"
+             style="text-decoration:none;border-bottom:1px solid var(--border);transition:color .2s;">legalfortconsulting@mail.ru</a>
         </div>
         <div class="footer-contact-item">
           <span class="footer-contact-label">Режим работы:</span>
@@ -853,7 +862,7 @@ if (burger && menu && overlay) {
 
   if (!track || !prevBtn || !nextBtn || !dots || !container) return;
 
-  const originalHTML = track.innerHTML;          // исходный набор
+  const originalHTML = track.innerHTML;          // сохраняем «чистый» набор
   let realItemsCount = 0;
   let realGroups = 0;
   let totalGroups = 0;
@@ -864,7 +873,7 @@ if (burger && menu && overlay) {
   let curPos = 0;
 
   const visibleCount = () => {
-    if (window.innerWidth <= 520) return 1;
+    if (window.innerWidth <= 520) return 1;      // мобильная версия – один элемент
     if (window.innerWidth <= 900)  return 2;
     return 3;
   };
@@ -881,6 +890,7 @@ if (burger && menu && overlay) {
   };
   const translateFor = (groupIdx) => groupIdx * slideWidth();
 
+  // ----------------- построение клонов -----------------
   const buildCarousel = () => {
     track.innerHTML = originalHTML;
     const visible = visibleCount();
@@ -905,6 +915,7 @@ if (burger && menu && overlay) {
     update(false);
   };
 
+  // ----------------- рендер точек -----------------
   const renderDots = () => {
     dots.innerHTML = '';
     for (let i = 0; i < realGroups; i++) {
@@ -916,19 +927,23 @@ if (burger && menu && overlay) {
     }
   };
 
+  // ----------------- обновление -----------------
   const update = (smooth = true) => {
     track.style.transition = smooth ? 'transform .3s cubic-bezier(.25,.46,.45,.94)' : 'none';
     const maxTranslate = track.scrollWidth - track.parentElement.offsetWidth;
     const tr = Math.min(translateFor(idx), maxTranslate);
     track.style.transform = `translateX(-${tr}px)`;
+
     const dotEls = dots.querySelectorAll('.carousel-dot');
     dotEls.forEach((dot, i) => dot.classList.toggle('active', i === idx - 1));
   };
 
+  // ----------------- навигация -----------------
   const goTo = (dotIdx) => { idx = dotIdx + 1; update(true); };
   const next = () => { idx++; update(true); };
   const prev = () => { idx--; update(true); };
 
+  // ----------------- drag (pointer) -----------------
   const startDrag = (e) => {
     if (e.button && e.button !== 0) return;
     dragging = true;
@@ -968,11 +983,10 @@ if (burger && menu && overlay) {
     track.releasePointerCapture(e.pointerId);
 
     const sw = slideWidth();
-    const threshold = sw * 0.25;
     const inertia = velocity * 200;
     const projected = curPos + inertia;
 
-    let newIdx = Math.round(projected / sw) + 1; // +1 – сдвиг на клон
+    let newIdx = Math.round(projected / sw) + 1; // +1 — смещение на клон
 
     if (newIdx <= 0) newIdx = totalGroups - 2;
     if (newIdx >= totalGroups - 1) newIdx = 1;
@@ -981,16 +995,16 @@ if (burger && menu && overlay) {
     update(true);
   };
 
-  // «кольцевой» переход
+  // ----------------- «кольцевой» переход -----------------
   track.addEventListener('transitionend', () => {
-    if (idx === totalGroups - 1) { // правая граница (правый клон)
+    if (idx === totalGroups - 1) { // правый клон
       idx = 1;
       track.style.transition = 'none';
       update(false);
       void track.offsetWidth;
       track.style.transition = '';
     }
-    if (idx === 0) { // левая граница (левый клон)
+    if (idx === 0) { // левый клон
       idx = totalGroups - 2;
       track.style.transition = 'none';
       update(false);
@@ -999,7 +1013,7 @@ if (burger && menu && overlay) {
     }
   });
 
-  // Инициализация и ресайз
+  // ----------------- инициализация и ресайз -----------------
   buildCarousel();
   let resizeTimer;
   window.addEventListener('resize', () => {
@@ -1034,6 +1048,7 @@ const consentAccept = document.getElementById('consentAccept');
 const consentCancel = document.getElementById('consentCancel');
 const form          = document.getElementById('contactForm');
 const formStatus    = document.getElementById('form-status');
+const phoneErrorEl  = document.querySelector('.phone-error');
 
 const API_URL = 'https://script.google.com/macros/s/AKfycbxYDM-EPa7pT3Vf2uCQDvKgfL2BSQBOu4b3OW8oNJxm_CESK-LemazzIXq0EfqHyL5rFw/exec';
 let payload = null;
@@ -1053,10 +1068,15 @@ consentModal.addEventListener('click', e => { if (e.target === consentModal) clo
 
 form.addEventListener('submit', e => {
   e.preventDefault();
+
   const name   = form.name?.value.trim();
   const phone  = form.phone?.value.trim();
   const city   = form.source?.value.trim();
   const msg    = form.message?.value.trim() || '';
+
+  // Сбросим сообщения об ошибках
+  phoneErrorEl.textContent = '';
+  formStatus.textContent = '';
 
   if (!name || !phone || !city) {
     formStatus.textContent = 'Пожалуйста, заполните все обязательные поля.';
@@ -1064,11 +1084,9 @@ form.addEventListener('submit', e => {
     return;
   }
 
-  // простая проверка формата телефона (дополнительно можно улучшить)
   const phonePattern = /^\+7\s?\(\d{3}\)\s?\d{3}[-\s]?\d{2}[-\s]?\d{2}$/;
   if (!phonePattern.test(phone)) {
-    formStatus.textContent = 'Введите телефон в формате +7 (999) 123‑45‑67';
-    formStatus.style.color = 'red';
+    phoneErrorEl.textContent = 'Введите телефон в формате +7 (999) 123‑45‑67';
     return;
   }
 
