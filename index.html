@@ -250,6 +250,81 @@
     .carousel-nav.prev { left:10px; }
     .carousel-nav.next { right:10px; }
 
+    /* -------------------------------------------------
+   2️⃣ УСЛУГИ – интерактивные карточки
+   ------------------------------------------------- */
+
+/* Сетка, как у вас была */
+.services {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 22px;
+}
+
+/* Ссылка‑обёртка делает весь блок кликабельным */
+.service-card {
+  text-decoration: none;      /* убираем подчеркивание */
+  color: inherit;              /* наследуем цвет текста */
+}
+
+/* Базовое оформление карточки услуги */
+.service {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 8px 22px rgba(0,0,0,.04);
+  /* плавные переходы */
+  transition: transform .3s ease, box-shadow .3s ease;
+  /* курсор будет указывать, что элемент интерактивный */
+  cursor: pointer;
+}
+
+/* Добавляем лёгкую тень и немного увеличиваем карточку при наведении */
+.service:hover {
+  transform: scale(1.04);
+  box-shadow: 0 12px 30px rgba(0,0,0,.15);
+}
+
+/* Делаем так, чтобы изображение тоже слегка «выходило наружу» */
+.service-img {
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  /* плавный масштаб изображения */
+  transition: transform .3s ease;
+}
+
+/* При наведении – изображение слегка увеличивается */
+.service:hover .service-img {
+  transform: scale(1.08);
+}
+
+/* Стили текста внутри карточки (оставляем как было) */
+.service strong {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.service .lead-small {
+  color: var(--muted);
+  font-size: 15px;
+}
+
+/* -------------------------------------------------
+   Адаптив: при маленьких ширинах меняем количество колонок
+   ------------------------------------------------- */
+@media (max-width: 900px) {
+  .services { grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 520px) {
+  .services { grid-template-columns: 1fr; }
+}
+
+
     /* ---- медиазапросы для карусели ---- */
     @media (max-width:900px) {
       .carousel-nav { display:none; }               /* стрелки только на десктопе */
@@ -583,42 +658,48 @@
   <!-- =========================
        УСЛУГИ
   ========================== -->
-  <section id="services">
-    <h2>Юридические услуги</h2>
-    <p class="lead-small">Комплексное сопровождение — от консультации до полного разрешения ситуации, включая военно‑правовые вопросы.</p>
-    <div class="services">
-      <div class="card service">
-        <img src="assets/service1.jpg" alt="Юридические консультации">
+ <section id="services">
+  <h2>Юридические услуги</h2>
+  <p class="lead-small">
+    Комплексное сопровождение — от консультации до полного разрешения ситуации,
+    включая военно‑правовые вопросы.
+  </p>
+
+  <div class="services">
+    <!-- ---------- Одна карточка ---------- -->
+    <a href="#" class="service-card">
+      <div class="service">
+        <img src="assets/service1.jpg" alt="Юридические консультации" class="service-img">
         <strong>Юридические консультации</strong>
-        <p class="lead-small">Очные и дистанционные консультации, правовой анализ, включая военнослужащих и контракт СВО.</p>
+        <p class="lead-small">
+          Очные и дистанционные консультации, правовой анализ, включая военнослужащих и контракт СВО.
+        </p>
       </div>
-      <div class="card service">
-        <img src="assets/service2.jpg" alt="Судебная защита">
+    </a>
+
+    <a href="#" class="service-card">
+      <div class="service">
+        <img src="assets/service2.jpg" alt="Судебная защита" class="service-img">
         <strong>Судебная защита</strong>
-        <p class="lead-small">Представительство в судах всех инстанций, включая споры по контрактной службе.</p>
+        <p class="lead-small">
+          Представительство в судах всех инстанций, включая споры по контрактной службе.
+        </p>
       </div>
-      <div class="card service">
-        <img src="assets/service3.jpg" alt="Договорное право">
+    </a>
+
+    <a href="#" class="service-card">
+      <div class="service">
+        <img src="assets/service3.jpg" alt="Договорное право" class="service-img">
         <strong>Договорное право</strong>
-        <p class="lead-small">Разработка, проверка, сопровождение сделок.</p>
+        <p class="lead-small">
+          Разработка, проверка, сопровождение сделок.
+        </p>
       </div>
-      <div class="card service">
-        <img src="assets/service4.jpg" alt="Семейные споры">
-        <strong>Семейные споры</strong>
-        <p class="lead-small">Разводы, алименты, раздел имущества.</p>
-      </div>
-      <div class="card service">
-        <img src="assets/service5.jpg" alt="Наследственные дела">
-        <strong>Наследственные дела</strong>
-        <p class="lead-small">Вступление в наследство, споры, защита долей.</p>
-      </div>
-      <div class="card service">
-        <img src="assets/service6.jpg" alt="Бизнес‑сопровождение">
-        <strong>Бизнес‑сопровождение</strong>
-        <p class="lead-small">Абонентское юридическое обслуживание компаний.</p>
-      </div>
-    </div>
-  </section>
+    </a>
+
+    <!-- … остальные услуги … -->
+  </div>
+</section>
 
   <!-- =========================
        КАРУСЕЛЬ (один диплом в мобильной версии)
