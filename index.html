@@ -132,7 +132,7 @@
       overflow-wrap:break-word;
     }
 
-    /* убираем фон и паддинги у карточках внутри карусели */
+    /* убираем фон и паддинги у карточек внутри карусели */
     .carousel-item .card { background:transparent; padding:0; border:none; box-shadow:none; }
 
     .hero aside {
@@ -153,6 +153,8 @@
       border-radius:14px;
       box-shadow:0 6px 16px rgba(0,0,0,.04);
       transition:transform .3s ease, box-shadow .3s ease;
+      /* ← фиксируем вес текста внутри карточки, чтобы он не выглядел «тонким» */
+      font-weight:500;          /* средний вес, читаемо и не жирно */
     }
     .service:hover {
       transform:translateY(-4px);
@@ -162,6 +164,7 @@
       width:100%; max-height:180px; object-fit:cover; border-radius:8px; margin-bottom:12px;
     }
     .service strong { display:block; margin-bottom:6px; }
+    .service p { margin:0; }      /* убираем лишние отступы у абзацев внутри карточки */
 
     .cols { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
     .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
@@ -215,7 +218,7 @@
 
     .carousel-item {
       flex-shrink:0;
-      min-width:0;                 /* будет переопределено в медиазапросе */
+      min-width:0;                 /* будет переопределено в медиазапросах */
     }
     .carousel-item img {
       width:100%;
@@ -267,7 +270,6 @@
       .carousel-item img { max-height:400px; }
     }
     @media (max-width:520px) {
-      /* Одна карточка занимает всю ширину, без промежутков */
       .carousel-item {
         flex:0 0 100% !important;
         min-width:100% !important;
@@ -781,7 +783,6 @@
         </div>
         <div class="footer-contact-item">
           <span class="footer-contact-label">Телефон:</span>
-          <!-- Кликабельный телефон -->
           <a href="tel:+79998365490"
              class="footer-contact-value phone">+7 (999) 836‑54‑90</a>
         </div>
@@ -1021,7 +1022,7 @@ if (burger && menu && overlay) {
       void track.offsetWidth;
       track.style.transition = '';
     }
-    if (idx === 0) {                        // левый клон
+    if (idx === 0) {                         // левый клон
       idx = totalGroups - 2;
       track.style.transition = 'none';
       update(false);
@@ -1050,11 +1051,11 @@ if (burger && menu && overlay) {
   // ==== wheel‑скролл ====
   container.addEventListener('wheel', e => {
     e.preventDefault();               // отменяем скролл страницы
-    if (dragging) return;             // не реагируем, пока тянем
+    if (dragging) return;             // игнорируем, пока тянем
     const now = Date.now();
     if (now - lastWheel < 250) return; // throttle 250 мс
     if (e.deltaY > 0) next();          // вниз → следующий
-    else if (e.deltaY < 0) prev();     // вверх → предыдущий
+    else if (e.deltaY < 0) prev();      // вверх → предыдущий
     lastWheel = now;
   });
 
@@ -1113,7 +1114,6 @@ form.addEventListener('submit', e => {
     return;
   }
 
-  // Принимаем +7 (999) 123‑45‑67, +7 999 123 45 67, 8 (999)1234567, 89991234567
   const phonePattern = /^(?:\+7|8)?\s*\(?\d{3}\)?\s*\d{3}[\s-]?\d{2}[\s-]?\d{2}$/;
   if (!phonePattern.test(phone)) {
     if (phoneErrorEl) {
@@ -1122,7 +1122,6 @@ form.addEventListener('submit', e => {
     return;
   }
 
-  // Отправляем оригинальный номер без нормализации
   const params = new URLSearchParams({
     name,
     phone,
