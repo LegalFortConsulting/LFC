@@ -1088,6 +1088,9 @@ if (burger && menu && overlay) {
 /* -------------------------------------------------
    3️⃣ Форма + модальное окно согласия
    ------------------------------------------------- */
+/* -------------------------------------------------
+   3️⃣ Форма + модальное окно согласия
+   ------------------------------------------------- */
 const consentModal   = document.getElementById('consentModal');
 const consentChk     = document.getElementById('consentCheckbox');
 const consentAccept  = document.getElementById('consentAccept');
@@ -1099,7 +1102,7 @@ const phoneErrorEl   = document.querySelector('.phone-error');
 const API_URL = 'https://script.google.com/macros/s/AKfycbxYDM-EPa7pT3Vf2uCQDvKgfL2BSQBOu4b3OW8oNJxm_CESK-LemazzIXq0EfqHyL5rFw/exec';
 let payload = null;
 
-// -------------------------------------------------
+/* ---------- Модальное окно ---------- */
 function openModal(p) {
   payload = p;                     // URLSearchParams объект
   consentChk.checked = false;
@@ -1115,7 +1118,7 @@ consentModal.addEventListener('click', e => {
   if (e.target === consentModal) closeModal();
 });
 
-// -------------------------------------------------
+/* ---------- Отправка формы ---------- */
 form.addEventListener('submit', e => {
   e.preventDefault();
 
@@ -1124,25 +1127,24 @@ form.addEventListener('submit', e => {
   const city  = form.source?.value.trim();
   const msg   = form.message?.value.trim() || '';
 
-  // Очистка сообщений об ошибках
+  // Сброс сообщений об ошибках
   if (phoneErrorEl) phoneErrorEl.textContent = '';
   formStatus.textContent = '';
 
-  // ---- простая валидация ----
+  // простая валидация полей
   if (!name || !phone || !city) {
-    formStatus.textContent = 'Пожалуйста, заполните все обязательные поля.';
+    formStatus.textContent = 'Заполните все обязательные поля.';
     formStatus.style.color = 'red';
     return;
   }
-
-  const phonePattern = /^(?:\+7|8)?\s*\(?\d{3}\)?\s*\d{3}[\s-]?\d{2}[\s-]?\d{2}$/;
-  if (!phonePattern.test(phone)) {
+  const phonePat = /^(?:\+7|8)?\s*\(?\d{3}\)?\s*\d{3}[\s-]?\d{2}[\s-]?\d{2}$/;
+  if (!phonePat.test(phone)) {
     if (phoneErrorEl) phoneErrorEl.textContent =
       'Введите телефон в формате +7 (999) 123‑45‑67 или 89991234567';
     return;
   }
 
-  // Формируем URL‑encoded Body
+  // Формируем тело запроса
   payload = new URLSearchParams({
     name,
     phone,
@@ -1153,14 +1155,14 @@ form.addEventListener('submit', e => {
   openModal(payload);
 });
 
-// -------------------------------------------------
+/* ---------- Кнопка «Принять и отправить» ---------- */
 consentAccept.addEventListener('click', async () => {
   if (!payload) {
-    alert('Сначала заполните форму.');
+    alert('Сначала заполните форму');
     return;
   }
   if (!consentChk.checked) {
-    alert('Подтвердите согласие на обработку персональных данных.');
+    alert('Подтвердите согласие на обработку персональных данных');
     return;
   }
 
@@ -1170,17 +1172,17 @@ consentAccept.addEventListener('click', async () => {
   closeModal();
 
   try {
-    const resp = await fetch(API_URL, {
+    const response = await fetch(API_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
       body: payload.toString()
     });
 
-    // ---- проверяем HTTP‑статус ----
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    // Если сервер вернул не‑2xx – считаем ошибкой
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-    // ---- сервер всегда отдает JSON {result:'ok'} или {result:'error', error:{message:…}} ----
-    const data = await resp.json();
+    // Ожидаем JSON‑ответ: {result:'ok'}  или  {result:'error', error:{message:...}}
+    const data = await response.json();
 
     if (data.result === 'ok') {
       formStatus.textContent = 'Заявка успешно отправлена!';
@@ -1189,19 +1191,19 @@ consentAccept.addEventListener('click', async () => {
       payload = null;
     } else {
       const msg = data.error?.message || 'Неизвестная ошибка сервера';
-      console.error('Сервер вернул ошибку →', msg);
       formStatus.textContent = 'Ошибка сервера: ' + msg;
       formStatus.style.color = 'red';
+      console.error('Ошибка сервера →', data);
     }
-
   } catch (err) {
-    console.error('Ошибка fetch →', err);
+    console.error('Fetch error →', err);
     formStatus.textContent = 'Ошибка отправки, попробуйте позже.';
     formStatus.style.color = 'red';
   } finally {
     consentAccept.disabled = false;
   }
 });
+
 
 
 /* -------------------------------------------------
