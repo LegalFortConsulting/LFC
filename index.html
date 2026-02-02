@@ -1085,19 +1085,23 @@ if (burger && menu && overlay) {
 /* -------------------------------------------------
    3️⃣ Форма + модальное окно согласия
    ------------------------------------------------- */
-const consentModal  = document.getElementById('consentModal');
-const consentChk    = document.getElementById('consentCheckbox');
-const consentAccept = document.getElementById('consentAccept');
-const consentCancel = document.getElementById('consentCancel');
-const form          = document.getElementById('contactForm');
-const formStatus    = document.getElementById('form-status');
-const phoneErrorEl  = document.querySelector('.phone-error');
+/* -------------------------------------------------
+   3️⃣ Форма + модальное окно согласия
+   ------------------------------------------------- */
+const consentModal   = document.getElementById('consentModal');
+const consentChk     = document.getElementById('consentCheckbox');
+const consentAccept  = document.getElementById('consentAccept');
+const consentCancel  = document.getElementById('consentCancel');
+const form           = document.getElementById('contactForm');
+const formStatus     = document.getElementById('form-status');
+const phoneErrorEl   = document.querySelector('.phone-error');
 
 const API_URL = 'https://script.google.com/macros/s/AKfycbxYDM-EPa7pT3Vf2uCQDvKgfL2BSQBOu4b3OW8oNJxm_CESK-LemazzIXq0EfqHyL5rFw/exec';
 let payload = null;
 
+// -------------------------------------------------
 function openModal(p) {
-  payload = p;
+  payload = p;                     // URLSearchParams объект
   consentChk.checked = false;
   consentModal.classList.add('active');
   document.body.style.overflow = 'hidden';
@@ -1107,19 +1111,24 @@ function closeModal(){
   document.body.style.overflow = '';
 }
 consentCancel.addEventListener('click', closeModal);
-consentModal.addEventListener('click', e => { if (e.target === consentModal) closeModal(); });
+consentModal.addEventListener('click', e => {
+  if (e.target === consentModal) closeModal();
+});
 
+// -------------------------------------------------
 form.addEventListener('submit', e => {
   e.preventDefault();
 
-  const name   = form.name?.value.trim();
-  const phone  = form.phone?.value.trim();
-  const city   = form.source?.value.trim();
-  const msg    = form.message?.value.trim() || '';
+  const name  = form.name?.value.trim();
+  const phone = form.phone?.value.trim();
+  const city  = form.source?.value.trim();
+  const msg   = form.message?.value.trim() || '';
 
+  // Очистка сообщений об ошибках
   if (phoneErrorEl) phoneErrorEl.textContent = '';
   formStatus.textContent = '';
 
+  // ---- простая валидация ----
   if (!name || !phone || !city) {
     formStatus.textContent = 'Пожалуйста, заполните все обязательные поля.';
     formStatus.style.color = 'red';
@@ -1128,50 +1137,72 @@ form.addEventListener('submit', e => {
 
   const phonePattern = /^(?:\+7|8)?\s*\(?\d{3}\)?\s*\d{3}[\s-]?\d{2}[\s-]?\d{2}$/;
   if (!phonePattern.test(phone)) {
-    if (phoneErrorEl) {
-      phoneErrorEl.textContent = 'Введите телефон в формате +7 (999) 123‑45‑67 или 89991234567';
-    }
+    if (phoneErrorEl) phoneErrorEl.textContent =
+      'Введите телефон в формате +7 (999) 123‑45‑67 или 89991234567';
     return;
   }
 
-  const params = new URLSearchParams({
+  // Формируем URL‑encoded Body
+  payload = new URLSearchParams({
     name,
     phone,
     source: city,
     message: msg
   });
-  openModal(params);
+
+  openModal(payload);
 });
 
-consentAccept.addEventListener('click', () => {
-  if (!payload) { alert('Сначала заполните форму.'); return; }
-  if (!consentChk.checked) { alert('Подтвердите согласие на обработку персональных данных.'); return; }
+// -------------------------------------------------
+consentAccept.addEventListener('click', async () => {
+  if (!payload) {
+    alert('Сначала заполните форму.');
+    return;
+  }
+  if (!consentChk.checked) {
+    alert('Подтвердите согласие на обработку персональных данных.');
+    return;
+  }
 
   formStatus.textContent = 'Отправка…';
   formStatus.style.color = 'var(--muted)';
   consentAccept.disabled = true;
   closeModal();
 
-  fetch(API_URL, {
-    method: 'POST',
-    headers: {'Content-Type':'application/x-www-form-urlencoded'},
-    body: payload.toString()
-  })
-  .then(r => r.text())
-  .then(txt => {
-    console.log('Ответ сервера:', txt);
-    formStatus.textContent = 'Заявка успешно отправлена!';
-    formStatus.style.color = 'green';
-    form.reset();
-    payload = null;
-  })
-  .catch(err => {
-    console.error(err);
+  try {
+    const resp = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: payload.toString()
+    });
+
+    // ---- проверяем HTTP‑статус ----
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+    // ---- сервер всегда отдает JSON {result:'ok'} или {result:'error', error:{message:…}} ----
+    const data = await resp.json();
+
+    if (data.result === 'ok') {
+      formStatus.textContent = 'Заявка успешно отправлена!';
+      formStatus.style.color = 'green';
+      form.reset();
+      payload = null;
+    } else {
+      const msg = data.error?.message || 'Неизвестная ошибка сервера';
+      console.error('Сервер вернул ошибку →', msg);
+      formStatus.textContent = 'Ошибка сервера: ' + msg;
+      formStatus.style.color = 'red';
+    }
+
+  } catch (err) {
+    console.error('Ошибка fetch →', err);
     formStatus.textContent = 'Ошибка отправки, попробуйте позже.';
     formStatus.style.color = 'red';
-  })
-  .finally(() => consentAccept.disabled = false);
+  } finally {
+    consentAccept.disabled = false;
+  }
 });
+
 
 /* -------------------------------------------------
    4️⃣ Защита от битых изображений
