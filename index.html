@@ -1137,12 +1137,15 @@ form.addEventListener('submit', e => {
     return;
   }
 
-  // Валидация телефона (тот же паттерн, что и в скрипте)
-  const phonePat = /^(?:\+7|8)?\s*\(?\d{3}\)?\s*\d{3}[\s-]?\d{2}[\s-]?\d{2}$/;
-  if (!phonePat.test(phone)) {
-    phoneErrorEl.textContent = 'Введите телефон в формате +7 (999) 123‑45‑67 или 89991234567';
-    return;
-  }
+ // ---------- Валидация телефона ----------
+const phonePat = /^(?:\+7|8)?\s*\(?\d{3}\)?[\s‑‑–—-]*\d{3}[\s‑‑–—-]*\d{2}[\s‑‑–—-]*\d{2}$/;
+if (!phonePat.test(phone)) {
+  phoneErrorEl.textContent =
+    'Введите телефон в формате +7 (999) 123‑45‑67 или 89991234567';
+  return;               // Остановка отправки
+}
+console.log('Телефон:', phone, 'прошёл проверку →', phonePat.test(phone));
+
 
   // Формируем payload (URL‑encoded)
   const payload = new URLSearchParams({
